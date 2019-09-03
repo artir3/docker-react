@@ -21,6 +21,7 @@ pipeline {
 }
 
 node {
+    checkout scm
     stage('Build') {
         echo 'Building node'
     }
