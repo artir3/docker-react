@@ -1,0 +1,61 @@
+#!/usr/bin/env groovy
+pipeline {
+    agent any
+    
+    environment {
+        SAD = 12
+        CC = 'clang'
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                //    sh 'make'
+                //    archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+                echo 'Building'
+            }
+        }
+        stage('Test') {
+            // when {
+            //     expression { currentBuild.result ==null || currentBuild.result == 'SUCCES' }
+            // }
+            
+            environment {
+                DEBUG_FLAG = '-g'
+            }
+            steps {
+                sh 'printenv'
+            }
+            // steps {
+            //     echo "runing ${env.BUILD_ID} on ${env.JENKINS_URL}"
+            //     echo 'Testing'
+            // }
+        }
+//        stage('Deploy') {
+//            steps {
+//                echo 'Deploying'
+//            }
+//        }
+    }
+}
+
+node {
+//    stage('Build') {
+//        sh 'make'
+//        archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+//        echo 'Building node'
+//    }
+    stage('Test') {
+        // if ( currentBuild.result ==null || currentBuild.result == 'SUCCES' ) {
+        //     echo "yep"
+        // }
+        echo "runing ${env.BUILD_ID} on ${env.JENKINS_URL} -> ${env.JOB_NAME}"
+        echo 'Testing node'
+    }
+    stage('Deploy') {
+        echo 'Deploying node'
+    }
+    withEnv(["PATH+MAVEN=${tool 'M3'}/bin"]){
+        sh "mvn -B verify"
+    }
+}
